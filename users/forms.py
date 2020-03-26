@@ -28,3 +28,8 @@ class RegisterForm(forms.Form):
             self.add_error('password', '')
             self.add_error('confirm_password', '')
             raise ValidationError('Passwords do not match')
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=100)
+    password = forms.CharField(label='Password', max_length=100, widget=forms.PasswordInput())
