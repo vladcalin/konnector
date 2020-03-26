@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -63,3 +63,8 @@ class LoginView(FormView):
             form.add_error('username', '')
             form.add_error('password', '')
         return render(request, self.template_name, {'form': form})
+
+
+def do_logout(request):
+    logout(request)
+    return HttpResponseRedirect('/login')

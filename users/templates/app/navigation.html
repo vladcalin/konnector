@@ -60,10 +60,13 @@
                     {{ user.get_full_name|default:user.email }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user-menu">
-                    <a class="dropdown-item" href="#">
-                        <i data-feather="log-out"></i>
-                        Log out
-                    </a>
+                    <form action="/logout" method="post">
+                        {% csrf_token %}
+                        <button class="dropdown-item" type="submit">
+                            <i data-feather="log-out"></i>
+                            Log out
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
