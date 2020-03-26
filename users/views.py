@@ -17,6 +17,12 @@ from users.models import User
 class Home(TemplateView):
     template_name = 'users/login.html'
 
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            return HttpResponseRedirect(reverse('dashboard'))
+
 
 class Register(TemplateView):
     template_name = 'users/register.html'
