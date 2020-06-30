@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from facebook.views import FacebookView
 from users.views import Home, Register, Dashboard, LoginView, do_logout
 
 urlpatterns = [
@@ -24,6 +25,8 @@ urlpatterns = [
     path('login', LoginView.as_view(), name='login'),
     path('dashboard/', Dashboard.as_view(), name='dashboard'),
     path('logout', do_logout, name='logout'),
-
-    path('twitter/', include('twitter.urls'))
+    path('twitter/', include('twitter.urls')),
+    path('facebook/', FacebookView.as_view(), name='facebook'),
 ]
+
+LOGIN_REDIRECT_URL = 'home'

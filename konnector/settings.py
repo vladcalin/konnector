@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'users',
     'twitter',
+    'facebook',
 ]
 
 MIDDLEWARE = [
