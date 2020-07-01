@@ -9,7 +9,7 @@
                     <form method="post">
                         {% csrf_token %}
                         {% bootstrap_form form %}
-                        <button class="btn btn-primary" type="submit">
+                        <button class="btn btn-primary" id="register_button" type="submit">
                             Create account
                         </button>
                         <a href="{% url "login" %}" id="cancel" name="cancel" class="btn btn-light">Cancel</a>
@@ -18,4 +18,99 @@
             </div>
         </div>
     </div>
+
+
+{% block javascript %}
+{{ block.super }}
+{% endblock %}
+<script>
+    const createAccountButton = document.getElementById('register_button');
+
+    const stringNotEmptyRegex = /^(?!\s*$).+/g
+    let nameMap = {
+        "id_username": [
+            [stringNotEmptyRegex, 'Field is required'],
+            [/^[A-Za-z0-9_]*$/g, "Username must contain only letters, numbers and/or _"],
+            [/^(?=.{3,20}$)/g, "Username must have between 3 and 20 characters"],
+        ],
+        "id_full_name": [
+            [stringNotEmptyRegex, 'Field is required'],
+            [/^[[A-Za-z]+[ -]*]*$/g, "Name must contain only letters and/or ' ', -"]
+        ],
+        "id_email": [
+            [/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/g, "Incorrect email format"]
+        ]
+    };
+    for (let id of Object.keys(nameMap)){
+        addEventListenerToRegisterFormInput(id, nameMap[id])
+    }
+
+    function addEventListenerToRegisterFormInput(inputId, regexErrorList){
+        let inputElement = document.getElementById(inputId);
+        let errorElementId = "error_" + inputId.split('_').slice(1).join("_");
+        inputElement.addEventListener(
+            "keyup", function(event){
+                for (let regexError of regexErrorList){
+                    validateInput(inputElement, errorElementId, regexError[0], regexError[1])
+                    if(isErrorAdded(errorElementId))
+                        break
+                }
+        });
+
+    }
+
+    function validateInput(formInput, errorElementId, regex, errorMessage){
+        let inputValue = formInput.value;
+        let matchesRegex = inputValue.match(regex) != null;
+        if(!matchesRegex){
+            addError(formInput, errorElementId, errorMessage);
+        }else{
+            removeError(formInput, errorElementId)
+        }
+    }
+
+    function addError(formInput, errorElementId, errorMessage){
+        let formField = formInput.parentElement;
+        let errorElement = document.getElementById(errorElementId);
+
+        formInput.classList.add("is-invalid");
+        createAccountButton.classList.add("disabled");
+
+        if (errorElement != null){
+            if (errorElement.text != errorMessage){
+                let node = document.getElementById(errorElementId)
+                if(node != null){
+                    removeError(formInput, errorElementId);
+                    addError(formInput, errorElementId, errorMessage)
+                }
+            }
+        }else{
+            let node = document.createElement("div");
+            let textnode = document.createTextNode(errorMessage);
+            node.appendChild(textnode);
+            node.classList.add('invalid-feedback');
+            let attribute = document.createAttribute("id");
+            attribute.value = errorElementId;
+            node.setAttributeNode(attribute);
+            formField.appendChild(node);
+        }
+    }
+
+    function removeError(formInput, errorElementId){
+        formInput.classList.remove("is-invalid");
+        createAccountButton.classList.remove("disabled");
+
+        let errorElement = document.getElementById(errorElementId);
+        let formField = formInput.parentElement;
+        if(errorElement != null){
+            formField.removeChild(errorElement);
+        }
+    }
+
+    function isErrorAdded(errorElementId){
+        let errorElement = document.getElementById(errorElementId);
+        return errorElement != null
+    }
+    </script>
+
 {% endblock %}
